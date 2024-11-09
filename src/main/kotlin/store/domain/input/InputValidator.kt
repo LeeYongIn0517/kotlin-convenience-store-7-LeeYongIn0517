@@ -1,4 +1,4 @@
-package store.util
+package store.domain.input
 
 import store.model.OrderItem
 import store.model.Product
