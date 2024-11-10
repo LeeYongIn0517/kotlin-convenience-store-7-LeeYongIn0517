@@ -2,28 +2,28 @@ package store.domain.promotion
 
 import store.model.OrderItem
 import store.model.Product
-import store.view.InputView
 
-class PromotionHandler(private val inputView: InputView, private val freeItemManager: FreeItemManager) {
+class PromotionHandler(private val freeItemManager: FreeItemManager) {
     fun handleInsufficientPromotionQuantity(
         order: OrderItem,
         product: Product,
-        requiredQuantity: Int
+        requiredQuantity: Int,
+        isWantsAdditionalItems: Boolean,
+        promptAsk: () -> Boolean,
     ) {
         val additionalQuantityNeeded = requiredQuantity - order.orderQuantity
 
-        // 추가 수량이 필요한 경우, 사용자에게 추가 수량 요청을 묻는 메시지 출력
-        val wantsAdditionalItems = inputView.promptAddItemsForPromotion(order.productName, additionalQuantityNeeded)
-
-        if (wantsAdditionalItems) {
-            handleAdditionalPromotionQuantity(order, product, additionalQuantityNeeded)
+        if (isWantsAdditionalItems) {
+            val isPayFullPrice = promptAsk()
+            handleAdditionalPromotionQuantity(order, product, additionalQuantityNeeded, isPayFullPrice)
         }
     }
 
     fun handleAdditionalPromotionQuantity(
         order: OrderItem,
         product: Product,
-        additionalQuantity: Int
+        additionalQuantity: Int,
+        isPayFullPrice: Boolean
     ) {
         val remainingPromotionStock = product.quantity - order.orderQuantity
 
@@ -33,14 +33,12 @@ class PromotionHandler(private val inputView: InputView, private val freeItemMan
             freeItemManager.addFreeItem(OrderItem(product.name, additionalQuantity, product.price))
         } else {
             // 부족한 경우, 정가 지불 여부를 사용자에게 묻기
-            promptFullPriceForShortage(product, additionalQuantity - remainingPromotionStock)
+            promptFullPriceForShortage(product, additionalQuantity - remainingPromotionStock, isPayFullPrice)
         }
     }
 
-    fun promptFullPriceForShortage(product: Product, shortageQuantity: Int) {
-        val payFullPrice = inputView.promptPayFullPriceForShortage()
-
-        if (payFullPrice) {
+    private fun promptFullPriceForShortage(product: Product, shortageQuantity: Int, isPayFullPrice: Boolean) {
+        if (isPayFullPrice) {
             // 사용자가 정가를 지불하기로 한 경우, 제품에서 수량 차감
             product.quantity -= shortageQuantity
         }
