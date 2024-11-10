@@ -2,7 +2,7 @@ package store.view
 
 import camp.nextstep.edu.missionutils.Console
 
-class InputView(private val outputView: OutputView) {
+class InputView {
 
     fun getProductOrderInput(): String {
         println(PRODUCT_INPUT)
@@ -52,6 +52,5 @@ class InputView(private val outputView: OutputView) {
         const val MESSAGE_PROMPT_APPLY_MEMBERSHIP_DISCOUNT = "멤버십 할인을 적용하시겠습니까? (Y/N)"
         const val MESSAGE_PROMPT_ADDITIONAL_PURCHASE = "추가 구매를 진행하시겠습니까? (Y/N)"
         const val MESSAGE_INVALID_INPUT = "올바른 입력을 해주세요. (Y/N)"
-
     }
 }
