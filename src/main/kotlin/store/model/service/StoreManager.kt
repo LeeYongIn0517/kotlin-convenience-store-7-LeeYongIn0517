@@ -1,8 +1,8 @@
-package store.domain
+package store.model.service
 
-import store.domain.product.ProductParser
-import store.domain.promotion.PromotionParser
-import store.model.Product
+import store.model.service.product.ProductParser
+import store.model.service.promotion.PromotionParser
+import store.model.entity.Product
 
 class StoreManager(
     private val productParser: ProductParser,

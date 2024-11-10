@@ -1,8 +1,8 @@
-package store.domain.controller
+package store.controller
 
-import store.domain.StoreManager
-import store.model.OrderItem
-import store.model.Product
+import store.model.service.StoreManager
+import store.model.entity.OrderItem
+import store.model.entity.Product
 import store.view.OutputView
 
 class Controller(

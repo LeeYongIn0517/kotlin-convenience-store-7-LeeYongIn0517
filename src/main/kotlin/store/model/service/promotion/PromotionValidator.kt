@@ -1,6 +1,6 @@
-package store.domain.validator
+package store.model.service.promotion
 
-import store.model.Promotion
+import store.model.entity.Promotion
 import java.time.LocalDateTime
 
 class PromotionValidator {

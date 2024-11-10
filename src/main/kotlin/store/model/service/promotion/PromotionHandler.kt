@@ -1,7 +1,7 @@
-package store.domain.promotion
+package store.model.service.promotion
 
-import store.model.OrderItem
-import store.model.Product
+import store.model.entity.OrderItem
+import store.model.entity.Product
 
 class PromotionHandler(private val freeItemManager: FreeItemManager) {
     fun handleInsufficientPromotionQuantity(

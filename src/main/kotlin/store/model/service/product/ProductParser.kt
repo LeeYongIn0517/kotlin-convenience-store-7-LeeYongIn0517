@@ -1,7 +1,7 @@
-package store.domain.product
+package store.model.service.product
 
-import store.domain.promotion.PromotionParser
-import store.model.Product
+import store.model.service.promotion.PromotionParser
+import store.model.entity.Product
 import java.io.File
 
 class ProductParser(private val promotionParser: PromotionParser) {

@@ -1,9 +1,9 @@
-package store.domain.controller
+package store.controller
 
-import store.domain.ReceiptManager
-import store.domain.promotion.FreeItemManager
-import store.model.OrderItem
-import store.model.Product
+import store.model.service.ReceiptManager
+import store.model.service.promotion.FreeItemManager
+import store.model.entity.OrderItem
+import store.model.entity.Product
 import store.view.OutputView
 
 class ReceiptController(

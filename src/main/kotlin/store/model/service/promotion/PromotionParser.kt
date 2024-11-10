@@ -1,7 +1,7 @@
-package store.domain.promotion
+package store.model.service.promotion
 
-import store.model.Promotion
-import store.model.PromotionType
+import store.model.entity.Promotion
+import store.model.entity.PromotionType
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

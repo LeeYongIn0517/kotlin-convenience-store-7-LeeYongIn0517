@@ -1,6 +1,6 @@
-package store.domain.promotion
+package store.model.service.promotion
 
-import store.model.OrderItem
+import store.model.entity.OrderItem
 
 class FreeItemManager {
     private val freeItems = mutableListOf<OrderItem>()

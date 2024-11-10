@@ -1,8 +1,8 @@
-package store.domain.controller
+package store.controller
 
-import store.domain.validator.InputValidator
-import store.model.OrderItem
-import store.model.Product
+import store.model.entity.OrderItem
+import store.model.entity.Product
+import store.view.InputValidator
 import store.view.InputView
 
 class InputController(private val inputView: InputView, private val inputValidator: InputValidator) {

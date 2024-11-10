@@ -1,7 +1,7 @@
-package store.domain.validator
+package store.view
 
-import store.model.OrderItem
-import store.model.Product
+import store.model.entity.OrderItem
+import store.model.entity.Product
 
 class InputValidator {
     fun validateProductAndOrder(input: String, availableProducts: List<Product>): List<OrderItem> {

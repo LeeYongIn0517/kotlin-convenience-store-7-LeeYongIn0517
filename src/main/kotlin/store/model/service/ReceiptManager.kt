@@ -1,8 +1,8 @@
-package store.domain
+package store.model.service
 
-import store.model.OrderItem
-import store.model.Product
-import store.model.Receipt
+import store.model.entity.OrderItem
+import store.model.entity.Product
+import store.model.entity.Receipt
 
 class ReceiptManager {
     private var receipt: Receipt = initializeReceipt()

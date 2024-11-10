@@ -1,13 +1,13 @@
-package store.domain.controller
+package store.controller
 
 import camp.nextstep.edu.missionutils.DateTimes
-import store.domain.promotion.FreeItemManager
-import store.domain.promotion.PromotionCalculator
-import store.domain.promotion.PromotionHandler
-import store.domain.validator.PromotionValidator
-import store.model.OrderItem
-import store.model.Product
-import store.model.Promotion
+import store.model.entity.OrderItem
+import store.model.entity.Product
+import store.model.entity.Promotion
+import store.model.service.promotion.FreeItemManager
+import store.model.service.promotion.PromotionCalculator
+import store.model.service.promotion.PromotionHandler
+import store.model.service.promotion.PromotionValidator
 import java.time.LocalDateTime
 
 class PromotionController(

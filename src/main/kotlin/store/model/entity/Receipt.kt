@@ -1,4 +1,4 @@
-package store.model
+package store.model.entity
 
 data class Receipt(
     var storeName: String = "W 편의점",

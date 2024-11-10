@@ -1,4 +1,4 @@
-package store.model
+package store.model.entity
 
 import java.time.LocalDateTime
 

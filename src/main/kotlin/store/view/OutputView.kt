@@ -1,7 +1,7 @@
 package store.view
 
-import store.model.Product
-import store.model.Receipt
+import store.model.entity.Product
+import store.model.entity.Receipt
 import store.view.InputView.Companion.PRODUCT_COMMENT
 import java.text.NumberFormat
 import java.util.*

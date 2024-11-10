@@ -1,18 +1,14 @@
 package store
 
-import store.domain.ReceiptManager
-import store.domain.StoreManager
-import store.domain.controller.Controller
-import store.domain.controller.InputController
-import store.domain.controller.PromotionController
-import store.domain.controller.ReceiptController
-import store.domain.product.ProductParser
-import store.domain.promotion.FreeItemManager
-import store.domain.promotion.PromotionCalculator
-import store.domain.promotion.PromotionHandler
-import store.domain.promotion.PromotionParser
-import store.domain.validator.InputValidator
-import store.domain.validator.PromotionValidator
+import store.controller.Controller
+import store.controller.InputController
+import store.controller.PromotionController
+import store.controller.ReceiptController
+import store.model.service.ReceiptManager
+import store.model.service.StoreManager
+import store.model.service.product.ProductParser
+import store.model.service.promotion.*
+import store.view.InputValidator
 import store.view.InputView
 import store.view.OutputView
 

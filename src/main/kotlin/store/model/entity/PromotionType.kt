@@ -1,4 +1,4 @@
-package store.model
+package store.model.entity
 
 enum class PromotionType {
     NONE, //null
