@@ -1,4 +1,4 @@
-package store.domain.promotion
+package store.domain.validator
 
 import store.model.Promotion
 import java.time.LocalDateTime

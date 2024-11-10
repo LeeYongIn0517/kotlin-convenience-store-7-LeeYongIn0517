@@ -1,4 +1,4 @@
-package store.domain.input
+package store.domain.validator
 
 import store.model.OrderItem
 import store.model.Product

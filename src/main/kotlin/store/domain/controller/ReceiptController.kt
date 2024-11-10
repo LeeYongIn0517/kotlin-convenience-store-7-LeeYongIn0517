@@ -1,7 +1,7 @@
-package store.domain.promotion
+package store.domain.controller
 
 import store.domain.ReceiptManager
-import store.domain.input.InputController
+import store.domain.promotion.FreeItemManager
 import store.model.OrderItem
 import store.model.Product
 import store.view.OutputView
@@ -36,5 +36,4 @@ class ReceiptController(
     fun updateReceiptProductStocks(availableProducts: List<Product>): List<Product> {
         return receiptManager.updateProductStock(availableProducts.toMutableList())
     }
-
 }
