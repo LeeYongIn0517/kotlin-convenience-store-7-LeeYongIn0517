@@ -1,11 +1,10 @@
 package store.domain
 
-import store.domain.input.InputController
 import store.model.OrderItem
 import store.model.Product
 import store.model.Receipt
 
-class ReceiptManager(private val inputController: InputController) {
+class ReceiptManager() {
     private var receipt: Receipt = initializeReceipt()
 
     fun resetReceipt() {
@@ -16,29 +15,25 @@ class ReceiptManager(private val inputController: InputController) {
         return Receipt("W 편의점", listOf(), listOf(), 0, 0, 0, 0, 0)
     }
 
-    fun updateReceiptWithOrder(orderItems: List<OrderItem>) {
+    fun setReceiptItems(orderItems: List<OrderItem>) {
         receipt.items = orderItems
-        calculateTotalAmount()
-        calculateDiscountAmount()
-        applyMembershipDiscount()
-        calculateFinalAmount()
     }
 
     fun updateFreeItems(freeItems: List<OrderItem>) {
         receipt.freeItems = freeItems
     }
 
-    private fun calculateTotalAmount() {
+    fun calculateTotalAmount() {
         receipt.totalPrice = receipt.items.sumOf { it.price * it.orderQuantity } +
                 receipt.freeItems.sumOf { it.price * it.orderQuantity }
     }
 
-    private fun calculateDiscountAmount() {
+    fun calculateDiscountAmount() {
         receipt.promotionDiscount += receipt.freeItems.sumOf { it.price * it.orderQuantity }
     }
 
-    private fun applyMembershipDiscount() {
-        if (inputController.inputView.promptApplyMembershipDiscount()) {
+    fun applyMembershipDiscount(isApplyMembershipDiscount: Boolean) {
+        if (isApplyMembershipDiscount) {
             val amountAfterPromotion = receipt.totalPrice - receipt.promotionDiscount
             receipt.membershipDiscount = (amountAfterPromotion * 0.3).toInt().coerceAtMost(8000)
         } else {
@@ -46,7 +41,7 @@ class ReceiptManager(private val inputController: InputController) {
         }
     }
 
-    private fun calculateFinalAmount() {
+    fun calculateFinalAmount() {
         receipt.finalAmount = receipt.totalPrice - receipt.promotionDiscount - receipt.membershipDiscount
     }
 
