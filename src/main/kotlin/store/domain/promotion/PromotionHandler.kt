@@ -4,12 +4,11 @@ import store.model.OrderItem
 import store.model.Product
 import store.view.InputView
 
-class PromotionHandler(private val inputView: InputView) {
+class PromotionHandler(private val inputView: InputView, private val freeItemManager: FreeItemManager) {
     fun handleInsufficientPromotionQuantity(
         order: OrderItem,
         product: Product,
-        requiredQuantity: Int,
-        freeItems: MutableList<OrderItem>
+        requiredQuantity: Int
     ) {
         val additionalQuantityNeeded = requiredQuantity - order.orderQuantity
 
@@ -17,29 +16,28 @@ class PromotionHandler(private val inputView: InputView) {
         val wantsAdditionalItems = inputView.promptAddItemsForPromotion(order.productName, additionalQuantityNeeded)
 
         if (wantsAdditionalItems) {
-            handleAdditionalPromotionQuantity(order, product, additionalQuantityNeeded, freeItems)
+            handleAdditionalPromotionQuantity(order, product, additionalQuantityNeeded)
         }
     }
 
     fun handleAdditionalPromotionQuantity(
         order: OrderItem,
         product: Product,
-        additionalQuantity: Int,
-        freeItems: MutableList<OrderItem>
+        additionalQuantity: Int
     ) {
         val remainingPromotionStock = product.quantity - order.orderQuantity
 
         if (remainingPromotionStock >= additionalQuantity) {
             // 필요한 수량이 충분한 경우 추가 수량만큼 제품에서 차감하고 무료 품목 목록에 추가
             product.quantity -= additionalQuantity
-            freeItems.add(OrderItem(product.name, additionalQuantity, product.price))
+            freeItemManager.addFreeItem(OrderItem(product.name, additionalQuantity, product.price))
         } else {
             // 부족한 경우, 정가 지불 여부를 사용자에게 묻기
-            promptFullPriceForShortage(order, product, additionalQuantity - remainingPromotionStock)
+            promptFullPriceForShortage(product, additionalQuantity - remainingPromotionStock)
         }
     }
 
-    fun promptFullPriceForShortage(order: OrderItem, product: Product, shortageQuantity: Int) {
+    fun promptFullPriceForShortage(product: Product, shortageQuantity: Int) {
         val payFullPrice = inputView.promptPayFullPriceForShortage()
 
         if (payFullPrice) {

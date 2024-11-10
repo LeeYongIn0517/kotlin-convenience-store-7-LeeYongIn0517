@@ -3,7 +3,9 @@ package store.domain.promotion
 import store.model.OrderItem
 
 class FreeItemManager {
-    fun addFreeItem(freeItems: MutableList<OrderItem>, freeItem: OrderItem) {
+    private val freeItems = mutableListOf<OrderItem>()
+
+    fun addFreeItem(freeItem: OrderItem) {
         // 기존 무료 항목 중 같은 상품이 있는지 확인
         val existingItem = freeItems.find { it.productName == freeItem.productName }
         if (existingItem != null) {
@@ -14,4 +16,6 @@ class FreeItemManager {
             freeItems.add(freeItem)
         }
     }
+
+    fun getFreeItems(): List<OrderItem> = freeItems.toList()
 }
