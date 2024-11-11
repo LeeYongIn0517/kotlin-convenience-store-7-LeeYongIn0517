@@ -11,11 +11,6 @@ class PromotionCalculator {
         return (product.quantity / defaultPromotionQuantity) * (product.promotion.buy + product.promotion.get)
     }
 
-    fun calculateDiscount(order: OrderItem, product: Product): Int {
-        val freeQuantity = order.orderQuantity / product.promotion!!.buy
-        return freeQuantity * product.price
-    }
-
     fun calculateFreeItemQuantity(order: OrderItem, product: Product): Int {
         val buyQuantity = product.promotion!!.buy
         val freeGetQuantity = product.promotion.get
