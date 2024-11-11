@@ -1,8 +1,8 @@
 package store.model.service
 
+import store.model.entity.Product
 import store.model.service.product.ProductParser
 import store.model.service.promotion.PromotionParser
-import store.model.entity.Product
 
 class StoreManager(
     private val productParser: ProductParser,
@@ -12,6 +12,7 @@ class StoreManager(
 
     fun initializeStore() {
         promotionParser.loadPromotions()
+        products.clear()
         products.addAll(productParser.loadProducts().toMutableList())
     }
 
