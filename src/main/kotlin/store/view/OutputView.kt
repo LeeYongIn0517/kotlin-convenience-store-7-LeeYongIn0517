@@ -37,7 +37,7 @@ class OutputView {
         }
 
         println(RECEIPT_SEPARATOR)
-        println("$TOTAL_PURCHASE\t\t${receipt.totalItems}\t${formatCurrency(receipt.totalPrice)}")
+        println("$TOTAL_PURCHASE\t\t${receipt.totalItemsCount}\t${formatCurrency(receipt.totalPrice)}")
         println("$PROMOTION_DISCOUNT\t\t\t-${formatCurrency(receipt.promotionDiscount)}")
         println("$MEMBERSHIP_DISCOUNT\t\t\t-${formatCurrency(receipt.membershipDiscount)}")
         println("$FINAL_AMOUNT\t\t\t ${formatCurrency(receipt.finalAmount)}")
