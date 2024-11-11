@@ -66,7 +66,7 @@ class PromotionController(
                     freeQuantity
                 )
             }
-            applyPromotionQuantity(order, product)
+            //applyPromotionQuantity(order, product)
         } else {
             val requiredQuantityForPromotion = promotionCalculator.calculatePromotionQuantity(product)
             println("requiredQuantityForPromotion: ${requiredQuantityForPromotion}")
@@ -79,18 +79,18 @@ class PromotionController(
         order: OrderItem,
         product: Product
     ) {
-        println("requiredQuantityForPromotion: ${requiredQuantityForPromotion}")
-        val additionalQuantityNeeded = order.orderQuantity - requiredQuantityForPromotion  //추가로 받을 수 있는 수량
+        val availableQuantity = order.orderQuantity - requiredQuantityForPromotion  //추가로 받을 수 있는 수량
 //        val isWantAdditionalItems =
 //            inputController.promptAddItemsForPromotion(order.productName, additionalQuantityNeeded)
         if (inputController.promptPayFullPriceForShortage(
                 productName = order.productName,
-                quantity = additionalQuantityNeeded
+                quantity = availableQuantity
             )
         ) {
             promotionHandler.handleInsufficientPromotionQuantity(
                 order,
                 product,
+                availableQuantity,
                 promotionCalculator.calculateMaximumFreeItemQuantity(product),
             )
         }
