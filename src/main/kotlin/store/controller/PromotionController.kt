@@ -52,13 +52,19 @@ class PromotionController(
         order: OrderItem,
         product: Product
     ) {
-        val requiredQuantityForPromotion = promotionCalculator.calculatePromotionQuantity(order, product)
+        val requiredQuantityForPromotion = promotionCalculator.calculatePromotionQuantity(product)
 
-        if (order.orderQuantity < requiredQuantityForPromotion) {
-            handlePromotionWithAdditionalItems(requiredQuantityForPromotion, order, product)
-        } else {
+        if (order.orderQuantity <= product.quantity) {
             promotionCalculator.calculateDiscount(order, product)
+            updateFreeItems(
+                order,
+                product,
+                order.orderQuantity - promotionCalculator.calculatePromotionQuantity(product)
+            )
             applyPromotionQuantity(order, product)
+        } else {
+
+            handlePromotionWithAdditionalItems(requiredQuantityForPromotion, order, product)
         }
     }
 
@@ -67,16 +73,21 @@ class PromotionController(
         order: OrderItem,
         product: Product
     ) {
-        val additionalQuantityNeeded = requiredQuantityForPromotion - order.orderQuantity
-        val isWantAdditionalItems =
-            inputController.promptAddItemsForPromotion(order.productName, additionalQuantityNeeded)
-        promotionHandler.handleInsufficientPromotionQuantity(
-            order,
-            product,
-            requiredQuantityForPromotion,
-            isWantAdditionalItems,
-            { inputController.promptPayFullPriceForShortage() }
-        )
+        println("requiredQuantityForPromotion: ${requiredQuantityForPromotion}")
+        val additionalQuantityNeeded = order.orderQuantity - requiredQuantityForPromotion  //추가로 받을 수 있는 수량
+//        val isWantAdditionalItems =
+//            inputController.promptAddItemsForPromotion(order.productName, additionalQuantityNeeded)
+        if (inputController.promptPayFullPriceForShortage(
+                productName = order.productName,
+                quantity = additionalQuantityNeeded
+            )
+        ) {
+            promotionHandler.handleInsufficientPromotionQuantity(
+                order,
+                product,
+                promotionCalculator.calculateFreeItemQuantity(product),
+            )
+        }
     }
 
     // 일반 주문 처리 메서드
@@ -89,15 +100,14 @@ class PromotionController(
         order: OrderItem,
         product: Product
     ) {
-        updateFreeItems(order, product)
         product.quantity -= order.orderQuantity
     }
 
     private fun updateFreeItems(
         order: OrderItem,
-        product: Product
+        product: Product,
+        freeQuantity: Int
     ) {
-        val freeQuantity = order.orderQuantity / product.promotion!!.buy
         freeItemManager.addFreeItem(OrderItem(product.name, freeQuantity, product.price))
     }
 }

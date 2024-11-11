@@ -30,7 +30,7 @@ class InputController(private val inputView: InputView, private val inputValidat
         return inputView.promptAddItemsForPromotion(productName, additionalQuantityNeeded)
     }
 
-    fun promptPayFullPriceForShortage(): Boolean {
-        return inputView.promptPayFullPriceForShortage()
+    fun promptPayFullPriceForShortage(productName: String, quantity: Int): Boolean {
+        return inputView.promptPayFullPriceForShortage(productName, quantity)
     }
 }

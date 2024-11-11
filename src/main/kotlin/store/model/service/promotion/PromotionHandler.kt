@@ -2,45 +2,34 @@ package store.model.service.promotion
 
 import store.model.entity.OrderItem
 import store.model.entity.Product
+import store.model.entity.PromotionType
+import store.model.service.StoreManager
 
-class PromotionHandler(private val freeItemManager: FreeItemManager) {
+class PromotionHandler(private val freeItemManager: FreeItemManager, private val storeManager: StoreManager) {
     fun handleInsufficientPromotionQuantity(
         order: OrderItem,
         product: Product,
-        requiredQuantity: Int,
-        isWantsAdditionalItems: Boolean,
-        promptAsk: () -> Boolean,
+        freeItemQuantity: Int,
     ) {
-        val additionalQuantityNeeded = requiredQuantity - order.orderQuantity
-
-        if (isWantsAdditionalItems) {
-            val isPayFullPrice = promptAsk()
-            handleAdditionalPromotionQuantity(order, product, additionalQuantityNeeded, isPayFullPrice)
-        }
+        handleAdditionalPromotionQuantity(order, product, freeItemQuantity)
     }
 
     fun handleAdditionalPromotionQuantity(
         order: OrderItem,
         product: Product,
-        additionalQuantity: Int,
-        isPayFullPrice: Boolean
+        freeItemQuantity: Int
     ) {
-        val remainingPromotionStock = product.quantity - order.orderQuantity
-
-        if (remainingPromotionStock >= additionalQuantity) {
-            // 필요한 수량이 충분한 경우 추가 수량만큼 제품에서 차감하고 무료 품목 목록에 추가
-            product.quantity -= additionalQuantity
-            freeItemManager.addFreeItem(OrderItem(product.name, additionalQuantity, product.price))
-        } else {
-            // 부족한 경우, 정가 지불 여부를 사용자에게 묻기
-            promptFullPriceForShortage(product, additionalQuantity - remainingPromotionStock, isPayFullPrice)
-        }
-    }
-
-    private fun promptFullPriceForShortage(product: Product, shortageQuantity: Int, isPayFullPrice: Boolean) {
-        if (isPayFullPrice) {
-            // 사용자가 정가를 지불하기로 한 경우, 제품에서 수량 차감
-            product.quantity -= shortageQuantity
-        }
+        val remainingPromotionQuantity = order.orderQuantity - product.quantity
+        val sameProductButNoPromotion = storeManager.getAvailableProducts()
+            .find { it.name == order.productName && it.promotion?.type == PromotionType.NONE }
+        freeItemManager.addFreeItem(
+            OrderItem(
+                product.name,
+                freeItemQuantity,
+                product.price
+            )
+        )
+        product.quantity -= remainingPromotionQuantity
+        sameProductButNoPromotion!!.quantity -= remainingPromotionQuantity
     }
 }
