@@ -1,9 +1,9 @@
 package store.controller
 
-import store.model.service.ReceiptManager
-import store.model.service.promotion.FreeItemManager
 import store.model.entity.OrderItem
 import store.model.entity.Product
+import store.model.service.ReceiptManager
+import store.model.service.promotion.FreeItemManager
 import store.view.OutputView
 
 class ReceiptController(
@@ -22,6 +22,7 @@ class ReceiptController(
 
     fun resetReceipt() {
         receiptManager.resetReceipt()
+        freeItemManager.initializeFreeItem()
     }
 
     fun showReceipt() {
