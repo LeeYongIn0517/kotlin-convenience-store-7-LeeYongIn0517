@@ -16,7 +16,12 @@ class ReceiptController(
         receiptManager.setReceiptItems(orderItems)
         receiptManager.calculateTotalAmount()
         receiptManager.calculateDiscountAmount()
-        receiptManager.applyMembershipDiscount(inputController.promptApplyMembershipDiscount())
+        receiptManager.applyMembershipDiscount(
+            inputController.promptApplyMembershipDiscount(),
+            orderItems,
+            freeItemManager.getFreeItems()
+        )
+        receiptManager.calculateTotalItemsCount()
         receiptManager.calculateFinalAmount()
     }
 

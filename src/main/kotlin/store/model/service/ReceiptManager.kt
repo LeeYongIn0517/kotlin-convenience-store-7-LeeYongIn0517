@@ -26,8 +26,7 @@ class ReceiptManager {
 
     // 계산 관련 메서드
     fun calculateTotalAmount() {
-        receipt.totalPrice = receipt.items.sumOf { it.price * it.orderQuantity } +
-                receipt.freeItems.sumOf { it.price * it.orderQuantity }
+        receipt.totalPrice = receipt.items.sumOf { it.price * it.orderQuantity }
     }
 
     fun calculateDiscountAmount() {
@@ -35,14 +34,27 @@ class ReceiptManager {
         receipt.promotionDiscount += receipt.freeItems.sumOf { it.price * it.orderQuantity }
     }
 
-    fun applyMembershipDiscount(isApplyMembershipDiscount: Boolean) {
+    fun applyMembershipDiscount(
+        isApplyMembershipDiscount: Boolean,
+        orderItems: List<OrderItem>,
+        freeItems: List<OrderItem>
+    ) {
+        val uniqueInA =
+            orderItems.filter { itemA -> freeItems.none { itemB -> itemB.productName == itemA.productName } }
+        val uniqueInB =
+            freeItems.filter { itemB -> orderItems.none { itemA -> itemA.productName == itemB.productName } }
+        val result = uniqueInA + uniqueInB
         if (isApplyMembershipDiscount) {
-            val amountAfterPromotion = receipt.totalPrice - receipt.promotionDiscount
-            receipt.membershipDiscount = (amountAfterPromotion * 0.3).toInt().coerceAtMost(8000)
-        } else {
-            receipt.finalAmount = receipt.totalPrice - receipt.promotionDiscount
+            result.forEach {
+                receipt.membershipDiscount += (it.price * it.orderQuantity * 0.3).toInt().coerceAtMost(8000)
+            }
         }
     }
+
+    fun calculateTotalItemsCount() {
+        receipt.totalItemsCount = receipt.items.sumOf { it.orderQuantity }
+    }
+
 
     fun calculateFinalAmount() {
         receipt.finalAmount = receipt.totalPrice - receipt.promotionDiscount - receipt.membershipDiscount
