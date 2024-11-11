@@ -21,13 +21,12 @@ class PromotionController(
         products: MutableList<Product>
     ) {
         val currentDate = DateTimes.now()
-
         orderItems.forEach { order ->
-            checkPromotionAvailabilty(order, products, currentDate)
+            checkPromotionAvailability(order, products, currentDate)
         }
     }
 
-    private fun checkPromotionAvailabilty(
+    private fun checkPromotionAvailability(
         order: OrderItem,
         products: MutableList<Product>,
         currentDate: LocalDateTime
@@ -46,43 +45,71 @@ class PromotionController(
     }
 
     // 프로모션 처리 관련 메서드
-    private fun processPromotion(
+    private fun processPromotion(order: OrderItem, product: Product) {
+        if (isOrderQuantitySufficient(order, product)) {
+            val freeQuantity = promotionCalculator.calculateFreeItemQuantity(order, product)
+            processOrderWithSufficientQuantity(order, product, freeQuantity)
+        } else {
+            handleInsufficientOrderQuantity(order, product)
+        }
+    }
+
+    private fun isOrderQuantitySufficient(order: OrderItem, product: Product): Boolean {
+        return order.orderQuantity <= product.quantity
+    }
+
+    private fun processOrderWithSufficientQuantity(
+        order: OrderItem,
+        product: Product,
+        freeQuantity: Int
+    ) {
+        if (isAdditionalItemsNeededForPromotion(order, product)) {
+            promptAndAddAdditionalItems(order, freeQuantity)
+        }
+        adjustSameProductWithoutPromotion(order, product, freeQuantity)
+        updateFreeItems(product, freeQuantity)
+    }
+
+    private fun adjustSameProductWithoutPromotion(
+        order: OrderItem,
+        product: Product,
+        freeQuantity: Int
+    ) {
+        val sameProductWithoutPromotion = promotionHandler.findSameProductWithoutPromotion(order)
+        if (sameProductWithoutPromotion != null &&
+            isSameProductQuantityInsufficient(order, product, sameProductWithoutPromotion)
+        ) {
+            sameProductWithoutPromotion.quantity -= freeQuantity
+        }
+    }
+
+    private fun isSameProductQuantityInsufficient(
+        order: OrderItem,
+        product: Product,
+        sameProductWithoutPromotion: Product
+    ): Boolean {
+        return sameProductWithoutPromotion.quantity + product.quantity < order.orderQuantity
+    }
+
+    private fun handleInsufficientOrderQuantity(
         order: OrderItem,
         product: Product
     ) {
-        if (order.orderQuantity <= product.quantity) {
-            val freeQuantity = promotionCalculator.calculateFreeItemQuantity(order, product)
-            println("freeQuantity: ${freeQuantity}")
-            if (order.orderQuantity % (product.promotion!!.buy + product.promotion.get) != 0) {
-                inputController.promptAddItemsForPromotion(
-                    productName = order.productName,
-                    additionalQuantityNeeded = freeQuantity
-                )
-                //applyPromotionQuantity(order, product)
-                itemManager.addItem(
-                    OrderItem(
-                        productName = order.productName,
-                        orderQuantity = freeQuantity,
-                        price = order.price
-                    )
-                )
+        val requiredQuantityForPromotion = promotionCalculator.calculatePromotionQuantity(product)
+        handlePromotionWithAdditionalItems(requiredQuantityForPromotion, order, product)
+    }
 
-            }
-            val sameProductButNoPromotion = promotionHandler.findSameProductButNoPromodion(order)
-            val sameProductButNoPromotionQuantity = sameProductButNoPromotion?.quantity ?: 0
-            if (sameProductButNoPromotion != null && sameProductButNoPromotionQuantity + product.quantity < order.orderQuantity) {
-                sameProductButNoPromotion.quantity -= freeQuantity
-            }
-            updateFreeItems(
-                product,
-                freeQuantity
-            )
+    private fun isAdditionalItemsNeededForPromotion(order: OrderItem, product: Product): Boolean {
+        val promotion = product.promotion ?: return false
+        return order.orderQuantity % (promotion.buy + promotion.get) != 0
+    }
 
-        } else {
-            val requiredQuantityForPromotion = promotionCalculator.calculatePromotionQuantity(product)
-            println("requiredQuantityForPromotion: ${requiredQuantityForPromotion}")
-            handlePromotionWithAdditionalItems(requiredQuantityForPromotion, order, product)
-        }
+    private fun promptAndAddAdditionalItems(order: OrderItem, freeQuantity: Int) {
+        inputController.promptAddItemsForPromotion(
+            productName = order.productName,
+            additionalQuantityNeeded = freeQuantity
+        )
+        itemManager.addItem(OrderItem(order.productName, freeQuantity, order.price))
     }
 
     private fun handlePromotionWithAdditionalItems(
@@ -90,35 +117,53 @@ class PromotionController(
         order: OrderItem,
         product: Product
     ) {
-        val availableQuantity = order.orderQuantity - requiredQuantityForPromotion  //추가로 받을 수 있는 수량
-//        val isWantAdditionalItems =
-//            inputController.promptAddItemsForPromotion(order.productName, additionalQuantityNeeded)
-        if (order.orderQuantity % (product.promotion!!.buy + product.promotion.get) != 0) {
-            if (inputController.promptPayFullPriceForShortage(
-                    productName = order.productName,
-                    quantity = availableQuantity
-                )
-            ) {
-                promotionHandler.handleInsufficientPromotionQuantity(
-                    order,
-                    product,
-                    availableQuantity,
-                    promotionCalculator.calculateMaximumFreeItemQuantity(product),
-                )
-            }
+        val availableQuantity = calculateAvailableQuantity(order, requiredQuantityForPromotion)
+
+        if (isAdditionalPaymentRequired(order, product, availableQuantity)) {
+            handleInsufficientPromotion(order, product, availableQuantity)
         }
+    }
+
+    private fun isAdditionalPaymentRequired(
+        order: OrderItem,
+        product: Product,
+        availableQuantity: Int
+    ): Boolean {
+        return isOrderQuantityNotMatchingPromotion(order, product) &&
+                shouldPayFullPriceForShortage(order, availableQuantity)
+    }
+
+    private fun calculateAvailableQuantity(order: OrderItem, requiredQuantityForPromotion: Int): Int {
+        return order.orderQuantity - requiredQuantityForPromotion
+    }
+
+    private fun isOrderQuantityNotMatchingPromotion(order: OrderItem, product: Product): Boolean {
+        val promotion = product.promotion ?: return false
+        return order.orderQuantity % (promotion.buy + promotion.get) != 0
+    }
+
+    private fun shouldPayFullPriceForShortage(order: OrderItem, availableQuantity: Int): Boolean {
+        return inputController.promptPayFullPriceForShortage(
+            productName = order.productName,
+            quantity = availableQuantity
+        )
+    }
+
+    private fun handleInsufficientPromotion(
+        order: OrderItem,
+        product: Product,
+        availableQuantity: Int
+    ) {
+        promotionHandler.handleInsufficientPromotionQuantity(
+            order,
+            product,
+            availableQuantity,
+            promotionCalculator.calculateMaximumFreeItemQuantity(product)
+        )
     }
 
     // 일반 주문 처리 메서드
     private fun processStandardOrder(order: OrderItem, product: Product) {
-        product.quantity -= order.orderQuantity
-    }
-
-    // 프로모션 적용 관련 메서드
-    private fun applyPromotionQuantity(
-        order: OrderItem,
-        product: Product
-    ) {
         product.quantity -= order.orderQuantity
     }
 

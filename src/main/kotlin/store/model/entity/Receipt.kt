@@ -12,7 +12,6 @@ data class Receipt(
 ) {
     // updatedProducts에서 구매한 상품과 증정된 상품의 재고를 차감하는 메서드
     fun updateProductStock(updatedProducts: MutableList<Product>): List<Product> {
-        println("updatedProducts: ${updatedProducts}")
         // 구매한 상품 목록 처리
         items.forEach { orderItem ->
             val product =

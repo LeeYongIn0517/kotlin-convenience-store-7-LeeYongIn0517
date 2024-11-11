@@ -30,7 +30,6 @@ class ReceiptManager {
     }
 
     fun calculateDiscountAmount() {
-        println("receipt.freeItems: ${receipt.freeItems}, receipt.items: ${receipt.items}")
         receipt.promotionDiscount += receipt.freeItems.sumOf { it.price * it.orderQuantity }
     }
 
