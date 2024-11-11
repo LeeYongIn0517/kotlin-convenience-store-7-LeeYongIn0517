@@ -16,11 +16,17 @@ class PromotionCalculator {
         return freeQuantity * product.price
     }
 
-    fun calculateFreeItemQuantity(product: Product): Int {
+    fun calculateFreeItemQuantity(order: OrderItem, product: Product): Int {
+        val buyQuantity = product.promotion!!.buy
+        val freeGetQuantity = product.promotion.get
+        return (order.orderQuantity / buyQuantity) * (freeGetQuantity)
+    }
+
+    fun calculateMaximumFreeItemQuantity(product: Product): Int {
         val buyQuantity = product.promotion!!.buy
         val freeGetQuantity = product.promotion.get
         val defaultPromotionQuantity = buyQuantity + freeGetQuantity
-        println((product.quantity / defaultPromotionQuantity) * (product.promotion.get))
-        return (product.quantity / defaultPromotionQuantity) * (product.promotion.get)
+        println((product.quantity / defaultPromotionQuantity) * freeGetQuantity)
+        return (product.quantity / defaultPromotionQuantity) * freeGetQuantity
     }
 }

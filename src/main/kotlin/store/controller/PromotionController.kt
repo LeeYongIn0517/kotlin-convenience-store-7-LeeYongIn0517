@@ -52,18 +52,24 @@ class PromotionController(
         order: OrderItem,
         product: Product
     ) {
-        val requiredQuantityForPromotion = promotionCalculator.calculatePromotionQuantity(product)
-
         if (order.orderQuantity <= product.quantity) {
-            promotionCalculator.calculateDiscount(order, product)
-            updateFreeItems(
-                order,
-                product,
-                order.orderQuantity - promotionCalculator.calculatePromotionQuantity(product)
-            )
+            val freeQuantity = promotionCalculator.calculateFreeItemQuantity(order, product)
+            if (inputController.promptAddItemsForPromotion(
+                    productName = order.productName,
+                    additionalQuantityNeeded = freeQuantity
+                )
+            ) {
+                println("freeQuantity: ${freeQuantity}")
+                promotionCalculator.calculateDiscount(order, product)
+                updateFreeItems(
+                    product,
+                    freeQuantity
+                )
+            }
             applyPromotionQuantity(order, product)
         } else {
-
+            val requiredQuantityForPromotion = promotionCalculator.calculatePromotionQuantity(product)
+            println("requiredQuantityForPromotion: ${requiredQuantityForPromotion}")
             handlePromotionWithAdditionalItems(requiredQuantityForPromotion, order, product)
         }
     }
@@ -85,7 +91,7 @@ class PromotionController(
             promotionHandler.handleInsufficientPromotionQuantity(
                 order,
                 product,
-                promotionCalculator.calculateFreeItemQuantity(product),
+                promotionCalculator.calculateMaximumFreeItemQuantity(product),
             )
         }
     }
@@ -104,7 +110,6 @@ class PromotionController(
     }
 
     private fun updateFreeItems(
-        order: OrderItem,
         product: Product,
         freeQuantity: Int
     ) {
