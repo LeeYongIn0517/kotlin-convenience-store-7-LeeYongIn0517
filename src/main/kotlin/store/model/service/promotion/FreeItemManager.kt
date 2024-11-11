@@ -15,7 +15,12 @@ class FreeItemManager {
             // 새로운 항목이면 무료 품목 목록에 추가
             freeItems.add(freeItem)
         }
+        println("freeItems: ${freeItems}")
     }
 
     fun getFreeItems(): List<OrderItem> = freeItems.toList()
+
+    fun initializeFreeItem() {
+        freeItems.clear()
+    }
 }
