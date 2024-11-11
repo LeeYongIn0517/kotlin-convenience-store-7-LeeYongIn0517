@@ -25,12 +25,11 @@ class InputValidator {
 
             // 존재하지 않는 상품일 경우
             val product = availableProducts.filter { it.name == productName }
-            val productTotalQuantity = product.sumOf { it.quantity }
-            val productPrice = product[0].price
             requireNotNull(product) { ERROR_NON_EXISTENT_PRODUCT }
-
+            val productQuantity = product.sumOf { it.quantity }
+            val productPrice = product.get(0).price
             // 수량이 재고를 초과할 경우
-            require(quantity <= productTotalQuantity) { ERROR_EXCEEDS_STOCK }
+            require(quantity <= productQuantity) { ERROR_EXCEEDS_STOCK }
 
             // 유효한 상품명과 수량을 OrderItem 객체로 추가
             orderList.add(OrderItem(productName, quantity, productPrice))

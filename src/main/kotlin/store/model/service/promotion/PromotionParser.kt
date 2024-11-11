@@ -32,8 +32,9 @@ class PromotionParser {
                     val type = when {
                         name == "반짝할인" -> PromotionType.DISCOUNT
                         name == "MD추천상품" -> PromotionType.MD_RECOMMENDATION
-                        name.matches(Regex("\\d+\\+1")) -> PromotionType.BUY_N_GET_1
-                        else -> PromotionType.NONE
+                        name.matches(Regex("[가-힣]*\\d+\\+1")) -> PromotionType.BUY_N_GET_1
+                        name == "null" -> PromotionType.NONE
+                        else -> null
                     }
 
                     val promotion = Promotion(name, type, buy, get, startDateTime, endDateTime)
