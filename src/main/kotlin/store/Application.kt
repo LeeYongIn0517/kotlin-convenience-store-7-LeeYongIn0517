@@ -26,7 +26,13 @@ fun main() {
     val promotionCalculator = PromotionCalculator()
     val promotionValidator = PromotionValidator()
     val freeItemManager = FreeItemManager()
-    val promotionHandler = PromotionHandler(freeItemManager)
+
+    // Store 및 Product 관련 객체 생성
+    val productParser = ProductParser(promotionParser)
+    val storeManager = StoreManager(productParser, promotionParser)
+
+    //Promotion 관련 객체 생성
+    val promotionHandler = PromotionHandler(freeItemManager, storeManager)
     val promotionController = PromotionController(
         inputController = inputController,
         promotionValidator = promotionValidator,
@@ -34,10 +40,6 @@ fun main() {
         promotionHandler = promotionHandler,
         freeItemManager = freeItemManager
     )
-
-    // Store 및 Product 관련 객체 생성
-    val productParser = ProductParser(promotionParser)
-    val storeManager = StoreManager(productParser, promotionParser)
 
     // Receipt 관련 객체 생성
     val receiptManager = ReceiptManager()
