@@ -14,8 +14,7 @@ data class Receipt(
     fun updateProductStock(updatedProducts: MutableList<Product>): List<Product> {
         // 구매한 상품 목록 처리
         items.forEach { orderItem ->
-            val product =
-                updatedProducts.find { it.name == orderItem.productName && it.promotion.type == z }
+            val product = updatedProducts.find { it.name == orderItem.productName }
             product?.let {
                 it.quantity = (it.quantity - orderItem.orderQuantity).coerceAtLeast(0)
             }
@@ -23,8 +22,7 @@ data class Receipt(
 
         // 증정된 상품 목록 처리
         freeItems.forEach { freeItem ->
-            val product =
-                updatedProducts.find { it.name == freeItem.productName && it.promotion.type == freeItem.promotionType }
+            val product = updatedProducts.find { it.name == freeItem.productName }
             product?.let {
                 it.quantity = (it.quantity - freeItem.orderQuantity).coerceAtLeast(0)
             }

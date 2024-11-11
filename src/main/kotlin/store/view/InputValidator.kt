@@ -33,7 +33,7 @@ class InputValidator {
             require(quantity <= productTotalQuantity) { ERROR_EXCEEDS_STOCK }
 
             // 유효한 상품명과 수량을 OrderItem 객체로 추가
-            orderList.add(OrderItem(productName, quantity, productPrice, null))
+            orderList.add(OrderItem(productName, quantity, productPrice))
         }
 
         // 유효한 주문 항목 리스트 반환

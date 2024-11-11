@@ -4,7 +4,6 @@ import camp.nextstep.edu.missionutils.DateTimes
 import store.model.entity.OrderItem
 import store.model.entity.Product
 import store.model.entity.Promotion
-import store.model.entity.PromotionType
 import store.model.service.promotion.FreeItemManager
 import store.model.service.promotion.PromotionCalculator
 import store.model.service.promotion.PromotionHandler
@@ -68,7 +67,7 @@ class PromotionController(
                 )
             }
             applyPromotionQuantity(order, product)
-        } else { //프로모션 재고가 부족한 경우
+        } else {
             val requiredQuantityForPromotion = promotionCalculator.calculatePromotionQuantity(product)
             println("requiredQuantityForPromotion: ${requiredQuantityForPromotion}")
             handlePromotionWithAdditionalItems(requiredQuantityForPromotion, order, product)
@@ -89,7 +88,6 @@ class PromotionController(
                 quantity = additionalQuantityNeeded
             )
         ) {
-            println("freeQuantity:${promotionCalculator.calculateMaximumFreeItemQuantity(product)}")
             promotionHandler.handleInsufficientPromotionQuantity(
                 order,
                 product,
@@ -115,6 +113,6 @@ class PromotionController(
         product: Product,
         freeQuantity: Int
     ) {
-        freeItemManager.addFreeItem(OrderItem(product.name, freeQuantity, product.price, PromotionType.NONE))
+        freeItemManager.addFreeItem(OrderItem(product.name, freeQuantity, product.price))
     }
 }
