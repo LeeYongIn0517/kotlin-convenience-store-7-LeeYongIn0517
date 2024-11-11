@@ -54,19 +54,18 @@ class PromotionController(
     ) {
         if (order.orderQuantity <= product.quantity) {
             val freeQuantity = promotionCalculator.calculateFreeItemQuantity(order, product)
-            if (inputController.promptAddItemsForPromotion(
+            println("freeQuantity: ${freeQuantity}")
+            if (order.orderQuantity % (product.promotion!!.buy + product.promotion.get) != 0) {
+                inputController.promptAddItemsForPromotion(
                     productName = order.productName,
                     additionalQuantityNeeded = freeQuantity
                 )
-            ) {
-                println("freeQuantity: ${freeQuantity}")
-                promotionCalculator.calculateDiscount(order, product)
-                updateFreeItems(
-                    product,
-                    freeQuantity
-                )
+                //applyPromotionQuantity(order, product)
             }
-            //applyPromotionQuantity(order, product)
+            updateFreeItems(
+                product,
+                freeQuantity
+            )
         } else {
             val requiredQuantityForPromotion = promotionCalculator.calculatePromotionQuantity(product)
             println("requiredQuantityForPromotion: ${requiredQuantityForPromotion}")
@@ -82,17 +81,19 @@ class PromotionController(
         val availableQuantity = order.orderQuantity - requiredQuantityForPromotion  //추가로 받을 수 있는 수량
 //        val isWantAdditionalItems =
 //            inputController.promptAddItemsForPromotion(order.productName, additionalQuantityNeeded)
-        if (inputController.promptPayFullPriceForShortage(
-                productName = order.productName,
-                quantity = availableQuantity
-            )
-        ) {
-            promotionHandler.handleInsufficientPromotionQuantity(
-                order,
-                product,
-                availableQuantity,
-                promotionCalculator.calculateMaximumFreeItemQuantity(product),
-            )
+        if (order.orderQuantity % (product.promotion!!.buy + product.promotion.get) != 0) {
+            if (inputController.promptPayFullPriceForShortage(
+                    productName = order.productName,
+                    quantity = availableQuantity
+                )
+            ) {
+                promotionHandler.handleInsufficientPromotionQuantity(
+                    order,
+                    product,
+                    availableQuantity,
+                    promotionCalculator.calculateMaximumFreeItemQuantity(product),
+                )
+            }
         }
     }
 
