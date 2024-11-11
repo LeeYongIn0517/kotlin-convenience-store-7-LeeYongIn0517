@@ -50,7 +50,7 @@ class InputView {
         const val MESSAGE_PROMPT_PAY_FULL_PRICE_FOR_SHORTAGE =
             "\"현재 %s은(는) %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)\""
         const val MESSAGE_PROMPT_APPLY_MEMBERSHIP_DISCOUNT = "멤버십 할인을 적용하시겠습니까? (Y/N)"
-        const val MESSAGE_PROMPT_ADDITIONAL_PURCHASE = "추가 구매를 진행하시겠습니까? (Y/N)"
+        const val MESSAGE_PROMPT_ADDITIONAL_PURCHASE = "감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)"
         const val MESSAGE_INVALID_INPUT = "올바른 입력을 해주세요. (Y/N)"
     }
 }
