@@ -1,8 +1,8 @@
 package store.controller
 
-import store.model.service.StoreManager
 import store.model.entity.OrderItem
 import store.model.entity.Product
+import store.model.service.StoreManager
 import store.view.OutputView
 
 class Controller(
@@ -17,8 +17,10 @@ class Controller(
         do {
             initializeStoreAndReceipt()
             val orderItems = processOrder()
+            receiptController.updateItems(orderItems)
+
             processPromotions(orderItems)
-            finalizeReceipt(orderItems)
+            finalizeReceipt(receiptController.getRecentItems())
             updateStoreInventory()
 
         } while (inputController.promptForAdditionalPurchase())
@@ -27,6 +29,7 @@ class Controller(
     private fun initializeStoreAndReceipt() {
         storeManager.initializeStore()
         receiptController.resetReceipt()
+        receiptController.initializeItems()
     }
 
     private fun processOrder(): List<OrderItem> {

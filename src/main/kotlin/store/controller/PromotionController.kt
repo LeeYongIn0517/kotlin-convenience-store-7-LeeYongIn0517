@@ -4,10 +4,7 @@ import camp.nextstep.edu.missionutils.DateTimes
 import store.model.entity.OrderItem
 import store.model.entity.Product
 import store.model.entity.Promotion
-import store.model.service.promotion.FreeItemManager
-import store.model.service.promotion.PromotionCalculator
-import store.model.service.promotion.PromotionHandler
-import store.model.service.promotion.PromotionValidator
+import store.model.service.promotion.*
 import java.time.LocalDateTime
 
 class PromotionController(
@@ -15,7 +12,8 @@ class PromotionController(
     private val promotionValidator: PromotionValidator,
     private val promotionCalculator: PromotionCalculator,
     private val promotionHandler: PromotionHandler,
-    private val freeItemManager: FreeItemManager
+    private val freeItemManager: FreeItemManager,
+    private val itemManager: ItemManager
 ) {
     // 상위 레벨 메서드
     fun applyPromotionToOrders(
@@ -61,11 +59,25 @@ class PromotionController(
                     additionalQuantityNeeded = freeQuantity
                 )
                 //applyPromotionQuantity(order, product)
+                itemManager.addItem(
+                    OrderItem(
+                        productName = order.productName,
+                        orderQuantity = freeQuantity,
+                        price = order.price
+                    )
+                )
+
+            }
+            val sameProductButNoPromotion = promotionHandler.findSameProductButNoPromodion(order)
+            val sameProductButNoPromotionQuantity = sameProductButNoPromotion?.quantity ?: 0
+            if (sameProductButNoPromotion != null && sameProductButNoPromotionQuantity + product.quantity < order.orderQuantity) {
+                sameProductButNoPromotion.quantity -= freeQuantity
             }
             updateFreeItems(
                 product,
                 freeQuantity
             )
+
         } else {
             val requiredQuantityForPromotion = promotionCalculator.calculatePromotionQuantity(product)
             println("requiredQuantityForPromotion: ${requiredQuantityForPromotion}")

@@ -27,8 +27,7 @@ class PromotionHandler(private val freeItemManager: FreeItemManager, private val
     ) {
         val noProductionQuantity = order.orderQuantity - product.quantity
         println("remainingQuantity:${noProductionQuantity}, ")
-        val sameProductButNoPromotion = storeManager.getAvailableProducts()
-            .find { it.name == order.productName && it.promotion == null }
+        val sameProductButNoPromotion = findSameProductButNoPromodion(order)
         freeItemManager.addFreeItem(
             OrderItem(
                 product.name,
@@ -46,8 +45,7 @@ class PromotionHandler(private val freeItemManager: FreeItemManager, private val
         product: Product,
     ) {
         val remainingPromotionQuantity = order.orderQuantity - product.quantity
-        val sameProductButNoPromotion = storeManager.getAvailableProducts()
-            .find { it.name == order.productName && it.promotion == null }
+        val sameProductButNoPromotion = findSameProductButNoPromodion(order)
         freeItemManager.addFreeItem(
             OrderItem(
                 order.productName,
@@ -58,5 +56,10 @@ class PromotionHandler(private val freeItemManager: FreeItemManager, private val
         if (sameProductButNoPromotion != null) {
             sameProductButNoPromotion.quantity -= remainingPromotionQuantity
         }
+    }
+
+    fun findSameProductButNoPromodion(order: OrderItem): Product? {
+        return storeManager.getAvailableProducts()
+            .find { it.name == order.productName && it.promotion == null }
     }
 }

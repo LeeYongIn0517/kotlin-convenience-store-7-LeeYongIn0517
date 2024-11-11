@@ -28,6 +28,7 @@ fun main() {
     val freeItemManager = FreeItemManager()
 
     // Store 및 Product 관련 객체 생성
+    val itemManager = ItemManager()
     val productParser = ProductParser(promotionParser)
     val storeManager = StoreManager(productParser, promotionParser)
 
@@ -38,12 +39,13 @@ fun main() {
         promotionValidator = promotionValidator,
         promotionCalculator = promotionCalculator,
         promotionHandler = promotionHandler,
-        freeItemManager = freeItemManager
+        freeItemManager = freeItemManager,
+        itemManager = itemManager
     )
 
     // Receipt 관련 객체 생성
     val receiptManager = ReceiptManager()
-    val receiptController = ReceiptController(receiptManager, freeItemManager, outputView, inputController)
+    val receiptController = ReceiptController(receiptManager, freeItemManager, itemManager, outputView, inputController)
 
     // Main Controller 생성 및 실행
     val controller = Controller(
