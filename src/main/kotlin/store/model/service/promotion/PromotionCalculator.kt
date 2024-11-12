@@ -21,7 +21,6 @@ class PromotionCalculator {
         val buyQuantity = product.promotion!!.buy
         val freeGetQuantity = product.promotion.get
         val defaultPromotionQuantity = buyQuantity + freeGetQuantity
-        println((product.quantity / defaultPromotionQuantity) * freeGetQuantity)
         return (product.quantity / defaultPromotionQuantity) * freeGetQuantity
     }
 }
